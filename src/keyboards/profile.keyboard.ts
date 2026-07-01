@@ -1,0 +1,7 @@
+import { InlineKeyboard } from "grammy";
+
+export const profileKeyboard = new InlineKeyboard()
+  .text("❤️ Улюблені", "favorites")
+  .text("🕐 Переглянути пізніше", "watchlist")
+  .row()
+  .text("⬅️ Назад", "back_to_main");

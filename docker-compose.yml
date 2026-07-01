@@ -1,0 +1,28 @@
+services:
+  bot:
+    build: .
+    container_name: reelix-movie-assistant-bot 
+    env_file:
+      - .env
+    # "пробрасываем" порт для webhooks, то указываем порт 3000:3000
+    # В нашем случаее используем long polling, так что доступ к порту не требуеться
+    # Пример порта
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6
+    container_name: reelix-mongo-db
+    environment:
+      MONGO_INITDB_USERNAME: sashkayello_db_user
+      MONGO_INITDB_PASSWORD: 0ka8AJqrjXppnepP
+    ports:
+      - '2017:2017'
+    networks:
+      - app-network
+networks:
+  app-network:

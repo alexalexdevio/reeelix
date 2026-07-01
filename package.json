@@ -1,0 +1,28 @@
+{
+  "name": "reelix-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "nodemon --exec tsx src/app.ts",
+    "build": "tsc",
+    "start:prod": "node dist/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grammyjs/hydrate": "^1.7.0",
+    "@ptkdev/logger": "^1.8.0",
+    "dotenv": "^17.4.2",
+    "grammy": "^1.44.0",
+    "mongoose": "^9.7.2",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^26.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
