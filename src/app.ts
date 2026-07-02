@@ -2,14 +2,24 @@ import Logger from "@ptkdev/logger";
 import { Bot, GrammyError, HttpError } from "grammy";
 import { IContext } from "./types/global.types";
 import { hydrate } from "@grammyjs/hydrate";
-import { backToMainHandler, help, profile, start, unknown } from "./handlers";
+import {
+  backToMainHandler,
+  confirmDeleteProfile,
+  deleteProfile,
+  help,
+  profile,
+  start,
+  unknown,
+} from "./handlers";
 import { config } from "./config";
 import { connectToDatabase, disconnectFromDatabase } from "./db/connection";
+import { ensureUserMiddleware } from "./middlewares/ensure-user";
 
 const bot = new Bot<IContext>(config.telegram.botKey);
 const logger = new Logger();
 
 bot.use(hydrate());
+bot.use(ensureUserMiddleware);
 
 bot.api.setMyCommands([
   {
@@ -27,6 +37,8 @@ bot.command("start", start);
 bot.command("help", help);
 
 bot.callbackQuery("profile", profile);
+bot.callbackQuery("delete_profile", deleteProfile);
+bot.callbackQuery("confirm_delete", confirmDeleteProfile);
 
 bot.callbackQuery("back_to_main", backToMainHandler);
 
