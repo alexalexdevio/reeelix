@@ -4,10 +4,12 @@ import { IContext } from "./types/global.types";
 import { hydrate } from "@grammyjs/hydrate";
 import {
   backToMainHandler,
+  backToMainHandlerFromMovieList,
   confirmDeleteProfile,
   deleteProfile,
   help,
   profile,
+  randomMovie,
   start,
   unknown,
 } from "./handlers";
@@ -36,11 +38,14 @@ bot.command("start", start);
 
 bot.command("help", help);
 
+bot.callbackQuery("random_movie", randomMovie);
+
 bot.callbackQuery("profile", profile);
 bot.callbackQuery("delete_profile", deleteProfile);
 bot.callbackQuery("confirm_delete", confirmDeleteProfile);
 
 bot.callbackQuery("back_to_main", backToMainHandler);
+bot.callbackQuery("back_out_list", backToMainHandlerFromMovieList);
 
 bot.on("message:text", unknown);
 
