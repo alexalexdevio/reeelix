@@ -17,6 +17,9 @@ import { config } from "./config";
 import { connectToDatabase, disconnectFromDatabase } from "./db/connection";
 import { ensureUserMiddleware } from "./middlewares/ensure-user";
 
+/** @TODO: Refactor handlers to chek where is callbacks */
+import { favCallback, laterCallback } from "./callbacks";
+
 const bot = new Bot<IContext>(config.telegram.botKey);
 const logger = new Logger();
 
@@ -39,6 +42,14 @@ bot.command("start", start);
 bot.command("help", help);
 
 bot.callbackQuery("random_movie", randomMovie);
+bot.callbackQuery(/^fav:(\d+)$/, async (ctx) => {
+  logger.info("[bot] fav callback triggered:", ctx.callbackQuery.data);
+  await favCallback(ctx);
+});
+bot.callbackQuery(/^later:(\d+)$/, async (ctx) => {
+  logger.info("[bot] later callback triggered:", ctx.callbackQuery.data);
+  await laterCallback(ctx);
+});
 
 bot.callbackQuery("profile", profile);
 bot.callbackQuery("delete_profile", deleteProfile);
