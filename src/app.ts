@@ -42,8 +42,14 @@ bot.command("start", start);
 bot.command("help", help);
 
 bot.callbackQuery("random_movie", randomMovie);
-bot.callbackQuery("/^fav:/", favCallback);
-bot.callbackQuery("/^later:/", laterCallback);
+bot.callbackQuery(/^fav:(\d+)$/, async (ctx) => {
+  logger.info("[bot] fav callback triggered:", ctx.callbackQuery.data);
+  await favCallback(ctx);
+});
+bot.callbackQuery(/^later:(\d+)$/, async (ctx) => {
+  logger.info("[bot] later callback triggered:", ctx.callbackQuery.data);
+  await laterCallback(ctx);
+});
 
 bot.callbackQuery("profile", profile);
 bot.callbackQuery("delete_profile", deleteProfile);

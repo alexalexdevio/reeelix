@@ -3,35 +3,45 @@ import { tmdbClient } from "../services/tmdb/tmdb.cleint";
 import { TmdbMovie } from "../services/tmdb/tmdb.types";
 import { getMovieTrailer } from "../services/tmdb/tmdb.service";
 import { addMovieInteraction } from "../services/movie-interaction/movie-interaction.service";
+import Logger from "@ptkdev/logger";
+
+const logger = new Logger();
 
 export const favCallback = async (ctx: Context) => {
-  await ctx.answerCallbackQuery();
+  if (!ctx.from || !ctx.callbackQuery?.data) return;
 
-  console.log(ctx);
-  if (!ctx.from) return;
+  const tmdbId = parseInt(ctx.callbackQuery.data.split(":")[1]);
 
-  const tmdbId = parseInt(ctx.callbackQuery!.data.split(":")[1]);
-  console.log(tmdbId);
+  if (isNaN(tmdbId))
+    return ctx.answerCallbackQuery({ text: `❌ Помилка, спробуйте ще раз` });
 
-  const { data: movie } = await tmdbClient.get<TmdbMovie>(`/movie/${tmdbId}`);
-  const trailerUrl = await getMovieTrailer(tmdbId);
+  try {
+    const { data: movie } = await tmdbClient.get<TmdbMovie>(`/movie/${tmdbId}`);
+    const trailerUrl = await getMovieTrailer(tmdbId);
 
-  const result = await addMovieInteraction(ctx.from.id, tmdbId, "favorite", {
-    title: movie.title,
-    posterPath: movie.poster_path,
-    rating: movie.vote_average,
-    year: movie.release_date?.split("–")[0] ?? "–",
-    trailerUrl,
-  });
+    const result = await addMovieInteraction(ctx.from.id, tmdbId, "favorite", {
+      title: movie.title,
+      posterPath: movie.poster_path,
+      rating: movie.vote_average,
+      year: movie.release_date?.split("–")[0] ?? "–",
+      trailerUrl,
+    });
 
-  const message: Record<typeof result, string> = {
-    added: `❤️ Додано до улюблених!`,
-    already_exists: `Цей фільм вже є в улюблених`,
-    limit_reached: `❌ Ліміт улюблених — ${5} фільмів. Видаліть один щоб додати новий.`,
-  };
+    const message: Record<typeof result, string> = {
+      added: `❤️ Додано до улюблених!`,
+      already_exists: `Цей фільм вже є в улюблених`,
+      limit_reached: `❌ Ліміт улюблених — ${5} фільмів. Видаліть один щоб додати новий.`,
+    };
 
-  await ctx.answerCallbackQuery({
-    text: message[result],
-    show_alert: result !== "added",
-  });
+    await ctx.answerCallbackQuery({
+      text: message[result],
+      show_alert: result !== "added",
+    });
+  } catch (error) {
+    logger.error(`[favCallback] error: ${error}`);
+    await ctx.answerCallbackQuery({
+      text: `❌ Щось пішло не так`,
+      show_alert: true,
+    });
+  }
 };
