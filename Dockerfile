@@ -9,7 +9,7 @@ COPY . .
 RUN npm run build
 
 # ---- Runtime stage ----
-FROM node:18-alpine AS runtime
+FROM node:20-alpine AS runtime
 WORKDIR /app
 
 COPY package*.json ./
