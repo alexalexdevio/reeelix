@@ -18,7 +18,16 @@ import { connectToDatabase, disconnectFromDatabase } from "./db/connection";
 import { ensureUserMiddleware } from "./middlewares/ensure-user";
 
 /** @TODO: Refactor handlers to chek where is callbacks */
-import { favCallback, laterCallback } from "./callbacks";
+import {
+  favCallback,
+  favoriteMovieInfoCallback,
+  favoritesCallback,
+  laterCallback,
+  removeFavoriteCallback,
+  removeWatchlistCallback,
+  watchlistCallback,
+  watchlistMovieInfoCallback,
+} from "./callbacks";
 
 const bot = new Bot<IContext>(config.telegram.botKey);
 const logger = new Logger();
@@ -52,6 +61,16 @@ bot.callbackQuery(/^later:(\d+)$/, async (ctx) => {
 });
 
 bot.callbackQuery("profile", profile);
+
+bot.callbackQuery("favorites", favoritesCallback);
+bot.callbackQuery("watchlist", watchlistCallback);
+
+bot.callbackQuery(/^movie_info:favorite:(\d+)$/, favoriteMovieInfoCallback);
+bot.callbackQuery(/^movie_info:watchlist:(\d+)$/, watchlistMovieInfoCallback);
+
+bot.callbackQuery(/^remove:favorite:(\d+)$/, removeFavoriteCallback);
+bot.callbackQuery(/^remove:watchlist:(\d+)$/, removeWatchlistCallback);
+
 bot.callbackQuery("delete_profile", deleteProfile);
 bot.callbackQuery("confirm_delete", confirmDeleteProfile);
 
