@@ -1,21 +1,20 @@
-# Базовый образ Node JS (легковесная версия на Alpine Linux)
-FROM node:18-alpine
-
-# Создаем робочую директорию в контейнере
+# ---- Build stage ----
+FROM node:20-alpine AS build
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
 COPY package*.json ./
-
-# Устанавливаем зависимости
 RUN npm install
 
-# Копируем весь проект внутрь контейнера
 COPY . .
-
-# Собираем typescript
 RUN npm run build
 
-# Задаем команду, которая будет виполняться при запуске контейнера
-# Это может быть как dev так и prod. Пока что указываем prod
+# ---- Runtime stage ----
+FROM node:18-alpine AS runtime
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --omit=dev
+
+COPY --from=build /app/dist ./dist
+
 CMD ["npm", "run", "start:prod"]

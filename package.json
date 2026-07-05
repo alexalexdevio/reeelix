@@ -4,9 +4,12 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon --exec tsx src/app.ts",
     "build": "tsc",
-    "start:prod": "node dist/app.js"
+    "start:dev": "nodemon --exec tsx src/app.ts",
+    "start:prod": "node dist/app.js",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker compose up --build",
+    "docker:down": "docker compose down"
   },
   "keywords": [],
   "author": "",
