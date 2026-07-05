@@ -2,6 +2,7 @@ import { CallbackQueryContext, Context } from "grammy";
 import { IContext } from "../types/global.types";
 import { comfirmKeyboard } from "../keyboards/comfirm.keyboard";
 import { deleteUser } from "../services/user/user.service";
+import { removeAllUserInteractions } from "../services/movie-interaction/movie-interaction.service";
 
 export const deleteProfile = async (ctx: CallbackQueryContext<IContext>) => {
   await ctx.answerCallbackQuery();
@@ -22,7 +23,10 @@ export const confirmDeleteProfile = async (ctx: Context) => {
 
   if (!ctx.from) return;
 
-  await deleteUser(ctx.from.id);
+  await Promise.all([
+    deleteUser(ctx.from.id),
+    removeAllUserInteractions(ctx.from.id),
+  ]);
 
   await ctx.deleteMessage();
 
